@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collaborative Canvas - Ultra Edition</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+        <div class="particle-field" id="particles"></div>
+    </div>
+
+    <!-- Glass Morphism Toolbar -->
+    <div class="toolbar">
+        <div class="toolbar-section">
+            <div class="tool-group">
+                <label for="color-picker" class="tool-label">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 2a10 10 0 0 1 10 10"/>
+                    </svg>
+                    <span>Color</span>
+                </label>
+                <div class="color-picker-wrapper">
+                    <input type="color" id="color-picker" value="#000000">
+                    <div class="color-preview"></div>
+                </div>
+            </div>
+
+            <div class="tool-group">
+                <label for="stroke-width" class="tool-label">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="2" y1="12" x2="22" y2="12"/>
+                    </svg>
+                    <span>Width</span>
+                </label>
+                <div class="slider-container">
+                    <input type="range" id="stroke-width" min="1" max="50" value="5">
+                    <span id="stroke-value" class="value-badge">5</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="toolbar-divider"></div>
+
+        <div class="toolbar-section tools-section">
+            <button id="brush-btn" class="tool-btn active" data-tooltip="Brush Tool">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+                    <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+                </svg>
+                <span>Brush</span>
+                <div class="tool-glow"></div>
+            </button>
+            <button id="eraser-btn" class="tool-btn" data-tooltip="Eraser">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 20H7L3 16l10-10 7 7v7z"/>
+                    <path d="M10 10l4 4"/>
+                </svg>
+                <span>Eraser</span>
+                <div class="tool-glow"></div>
+            </button>
+            <button id="undo-btn" class="tool-btn undo-btn" data-tooltip="Undo">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 7v6h6"/>
+                    <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13"/>
+                </svg>
+                <span>Undo</span>
+                <div class="tool-glow"></div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Advanced Stats Widget -->
+    <div id="stats-widget">
+        <div class="stats-header">
+            <div class="status-indicator"></div>
+            <h3>Live Stats</h3>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <div class="stat-content">
+                    <span class="stat-label">Users</span>
+                    <span id="user-count" class="stat-value">--</span>
+                </div>
+                <div class="stat-bar">
+                    <div class="stat-bar-fill" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="stat-item">
+                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <div class="stat-content">
+                    <span class="stat-label">Latency</span>
+                    <span id="latency" class="stat-value">--ms</span>
+                </div>
+                <div class="stat-bar">
+                    <div class="stat-bar-fill latency-bar" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="stat-item">
+                <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                </svg>
+                <div class="stat-content">
+                    <span class="stat-label">FPS</span>
+                    <span id="fps" class="stat-value">--</span>
+                </div>
+                <div class="stat-bar">
+                    <div class="stat-bar-fill fps-bar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="stats-footer">
+            <div class="connection-status">
+                <div class="pulse-dot"></div>
+                <span>Connected</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Canvas with Enhanced Effects -->
+    <div class="canvas-container">
+        <canvas id="drawing-canvas"></canvas>
+        <div class="canvas-overlay">
+            <div class="scan-line"></div>
+        </div>
+    </div>
+
+    <!-- Cursor Trail Effect -->
+    <div id="cursor-trail"></div>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="ui-widgets.js"></script>
+    <script src="websocket.js"></script>
+    <script src="canvas.js"></script>
+    <script src="main.js"></script>
+    
+    <!-- Enhanced Effects Script -->
+    <script>
+        // Particle System
+        function initParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Cursor Trail
+        function initCursorTrail() {
+            const trail = document.getElementById('cursor-trail');
+            let trails = [];
+            
+            document.addEventListener('mousemove', (e) => {
+                const trailElement = document.createElement('div');
+                trailElement.className = 'trail-dot';
+                trailElement.style.left = e.clientX + 'px';
+                trailElement.style.top = e.clientY + 'px';
+                trail.appendChild(trailElement);
+                trails.push(trailElement);
+                
+                setTimeout(() => {
+                    trailElement.remove();
+                    trails.shift();
+                }, 800);
+            });
+        }
+
+        // Toolbar Animations
+        function initToolbarEffects() {
+            const buttons = document.querySelectorAll('.tool-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    const glow = this.querySelector('.tool-glow');
+                    glow.style.opacity = '1';
+                    glow.style.transform = 'scale(1.2)';
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    const glow = this.querySelector('.tool-glow');
+                    glow.style.opacity = '0';
+                    glow.style.transform = 'scale(1)';
+                });
+            });
+        }
+
+        // Color Picker Preview
+        function initColorPicker() {
+            const picker = document.getElementById('color-picker');
+            const preview = document.querySelector('.color-preview');
+            
+            picker.addEventListener('input', (e) => {
+                preview.style.background = e.target.value;
+                preview.style.boxShadow = `0 0 20px ${e.target.value}80`;
+            });
+            
+            preview.style.background = picker.value;
+        }
+
+        // Initialize all effects
+        document.addEventListener('DOMContentLoaded', () => {
+            initParticles();
+            initCursorTrail();
+            initToolbarEffects();
+            initColorPicker();
+        });
+    </script>
+</body>
+</html>
