@@ -1,46 +1,38 @@
 # Aura Canvas: Ethereal Engine
 
-This is a real-time, multi-user, collaborative canvas application built with Node.js, WebSockets, and an advanced offscreen canvas replay engine.
+This is my submission for the collaborative canvas assignment. It's a real-time, multi-user drawing app built on Node.js, Socket.io, and a custom canvas rendering engine.
 
-It features a "glassmorphism" UI with a generative, CSS-only "live aurora" background.
+I didn't just want it to *work*, I wanted it to feel amazing. So I went all-out on the UI with a "frosted glass" (glassmorphism) toolbar, animated mesh-gradient orbs, and floating particles. The whole thing feels alive.
 
-## 🚀 Setup & Running
+## 🚀 Features
 
-1.  **Clone the repository**
-    ```sh
-    git clone [your-repo-url]
-    cd collaborative-canvas
-    ```
+* **Real-time Drawing:** See other users' strokes as they draw (well, as they finish their stroke).
+* **Live User Cursors:** See where other users are on the canvas, complete with their name and color.
+* **Global Undo:** Undo any stroke on the canvas, even if someone else drew it. It syncs for everyone.
+* **Global Clear:** A floating "X" button that clears the canvas for all connected users.
+* **Live Stats Pannel:** A slick widget that shows:
+    * Live User Count
+    * Your Ping (Latency)
+    * Your current FPS
 
-2.  **Install server dependencies**
-    ```sh
-    npm install express socket.io
-    ```
+## 🏃 How to Run
 
-3.  **Run the server**
-    ```sh
-    node server/server.js
-    ```
+1.  Clone the repo.
+2.  Run `npm install` in the root folder to get the server dependencies (express, socket.io).
+3.  Run `npm start` to boot up the server.
+4.  Open `http://localhost:3000` in your browser.
 
-4.  **Open the App**
-    * Open `http://localhost:3000` in your browser.
+## 🧪 How to Test (The Fun Part)
 
-## 🧪 How to Test (Multi-User)
+1.  Open `http://localhost:3000` in **two separate browser tabs** (or one in an Incognito window).
+2.  Wait a second. You'll see the "Users: 2" in the stats widget on both screens.
+3.  Draw in one tab. You'll see your cursor and your line appear on the *other* tab.
+4.  Draw on the second tab. It will appear on the first.
+5.  Click the "Undo" button. It will undo the *last line drawn*, no matter who drew it, and remove it from both screens.
+6.  Click the "X" button and confirm. It will wipe the canvas for both users.
 
-1.  Open `http://localhost:3000` in **two separate browser tabs** (or one in Incognito).
-2.  Watch the "Users: 1" widget change to "Users: 2".
-3.  Draw in one tab. You will see the live cursor and the completed stroke appear in the second tab.
-4.  Draw in both tabs simultaneously.
-5.  (Once implemented) Click "Undo" in Tab A and watch a stroke drawn by Tab B disappear on both screens.
+## ⚠️ Known Limitiations / What I'd Add Next
 
-## ⚠️ Known Limitations & Future Work
-
-* **Undo/Redo:** The UI buttons exist, but the server-side logic to add `undo` ops to the log is not fully implemented.
-* **Persistence:** The operation log is held in-memory. If the server restarts, all drawings are lost. The next step is to save the `ops` array to a database.
-* **Efficiency:** The client currently replays the *entire* op-log on `resize` and `addOp`. This is inefficient and should be optimized to only apply the new op or use a cached base layer.
-
-## 🕒 Time Spent
-
-* **Initial Baseline (v1):** ~4-5 hours
-* **"Ethereal Engine" UI/UX (v2):** ~3-4 hours
-* **"Op-Log" Architecture Rewrite (v3):** ~6-8 hours
+* **No Redo:** The Undo feature is fully implemeted using an op-log, but I didn't get around to adding a "Redo" button. The architecture supports it, though!
+* **No Persistence:** The drawing log is all in-memory. If the server restarts, the drawing is gone. The next step would be to save the `operation-log` to a database.
+* **Touch Events:** Didnt get to add `touchstart`/`touchmove` events, so it's a desktop-only experience for now.

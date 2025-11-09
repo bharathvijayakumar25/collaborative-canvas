@@ -30,11 +30,47 @@ class Canvas {
         this.ctx.strokeStyle = this.color;
         this.ctx.lineWidth = this.strokeWidth;
 
-        // Add event listeners
+        // --- Event Listeners ---
+        
+        // Desktop Mouse Events
         this.canvas.addEventListener('mousedown', this.startDraw);
         this.canvas.addEventListener('mousemove', this.draw);
         this.canvas.addEventListener('mouseup', this.stopDraw);
         this.canvas.addEventListener('mouseleave', this.stopDraw);
+
+        // ▼▼▼ MODIFICATION: Added Mobile Touch Events ▼▼▼
+        this.canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent scrolling
+            const touch = e.touches[0];
+            // We need to simulate an 'offsetX/Y'
+            const simEvent = { offsetX: touch.clientX, offsetY: touch.clientY };
+            this.startDraw(simEvent);
+        });
+
+        this.canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault(); // Prevent scrolling
+            const touch = e.touches[0];
+            const simEvent = { offsetX: touch.clientX, offsetY: touch.clientY };
+            this.draw(simEvent);
+        });
+
+        this.canvas.addEventListener('touchend', (e) => {
+            e.preventDefault(); // Prevent scrolling
+            
+            // We need to get the *last* touch position
+            const touch = e.changedTouches[0];
+            
+            // This handles the case where a touch ends *without* moving,
+            // or to register the final point.
+            if (this.isDrawing) {
+                 const simEvent = { offsetX: touch.clientX, offsetY: touch.clientY };
+                 this.draw(simEvent);
+            }
+            
+            // Now, end the stroke
+            this.stopDraw();
+        });
+        // ▲▲▲ END OF MODIFICATION ▲▲▲
     }
 
     // --- TOOLBAR SETTERS ---
