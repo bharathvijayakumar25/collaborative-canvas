@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 1. INITIALIZATION ---
 
     const canvas = new Canvas('drawing-canvas');
-    const socket = new WebSocketHandler('http://localhost:3000');
+    const socket = new WebSocketHandler(window.location.origin);
     
     // ▼▼▼ NEW: Initialize the Stats Widget ▼▼▼
     const stats = new StatsWidget();
